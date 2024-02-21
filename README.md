@@ -15,3 +15,5 @@ This turns into:
 
 $$y(i,n+1) = 2[1-r^2]y(i,n)-y(i,n-1)+r^2[y(i+1,n)+y(i-1,n)]$$
 $$r = \frac{c\Delta t}{\Delta x} \approx 1$$
+
+Note: n has to do with time and i has to do with position
