@@ -3,6 +3,10 @@ from matplotlib import pyplot as plt
 import datetime
 
 class Wave():
+
+  # static variable to control if it's running
+  running = True
+
   def __init__(self, velocity, clamp_right=True, clamp_left=True) -> None:
     self.dx = .01
     
@@ -16,6 +20,9 @@ class Wave():
     # some bool flags
     self.right_clamped = clamp_right
     self.left_clamped = clamp_left
+
+    self.fig = plt.figure()
+    self.fig.canvas.mpl_connect('close_event', self.on_close)
     pass
 
 
@@ -72,6 +79,10 @@ class Wave():
     ymax = max(current)
 
     while True:
+      # quit if running flag is false
+      if not self.running:
+        return
+      
       old, current, new = self.step(current, new)
 
       # plot one frame
@@ -86,4 +97,12 @@ class Wave():
       # stop if we're out of time
       if datetime.datetime.now() > end_time:
         break
+    pass
+
+  @classmethod
+  def set_running(cls, value:bool):
+    cls.running = value
+
+  def on_close(self, event):
+    self.set_running(False)
     pass
