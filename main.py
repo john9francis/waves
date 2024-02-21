@@ -13,7 +13,7 @@ def main():
   # TODO: perform a spectrum analysis
   w.generate_pos_over_time_data(.5)
   #w.plot_pos_over_time()
-  w.plot_dfts()
+  w.plot_dfts(2.5)
 
 
 

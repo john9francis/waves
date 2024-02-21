@@ -184,9 +184,11 @@ class Wave():
     return kvalues, gamma
   
 
-  def plot_dfts(self):
+  def plot_dfts(self, graph_portion=3):
     '''
     plot frequency vs. power
+    parameter is graph_portion, the higher the value the less
+    of the graph we generate. 
     '''
     # first create our frequency axis
     
@@ -195,6 +197,7 @@ class Wave():
 
     x1, y1 = self.DFT(self.right_over_time)
     y1 = [abs(i) for i in y1]
-    plt.plot(x, y)
-    plt.plot(x1, y1)
+
+    plt.plot(x[:int(len(x)//graph_portion)], y[:int(len(y)//graph_portion)])
+    plt.plot(x1[:int(len(x1)//graph_portion)], y1[:int(len(y1)//graph_portion)])
     plt.show()
