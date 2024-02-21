@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import datetime
 
 class Wave():
   def __init__(self, velocity) -> None:
@@ -38,10 +39,13 @@ class Wave():
     return old, current, new
 
 
-  def animated_plot(self, seconds):
+  def animated_plot(self, _seconds):
     old, current, new = self.initial_conditions()
 
-    for i in range(round(seconds/self.dt)):
+    start_time = datetime.datetime.now()
+    end_time = start_time + datetime.timedelta(seconds=_seconds)
+
+    while True:
       old, current, new = self.step(current, new)
 
       # plot one frame
@@ -49,4 +53,8 @@ class Wave():
       plt.draw()
       plt.pause(self.dt)
       plt.cla()
+
+      # stop if we're out of time
+      if datetime.datetime.now() > end_time:
+        break
     pass
