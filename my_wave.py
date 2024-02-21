@@ -133,7 +133,6 @@ class Wave():
   
 
 
-  # TODO: create plots of the position over time 95% from the end
   def generate_pos_over_time_data(self, amount_of_time: int):
 
     old, current, new = self.initial_conditions()
