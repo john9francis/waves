@@ -20,6 +20,7 @@ class Wave():
     # define arrays of position of ends over time
     self.left_over_time = []
     self.right_over_time = []
+    self.time_array = []
 
     # some bool flags
     self.right_clamped = clamp_right
@@ -133,11 +134,9 @@ class Wave():
 
 
   # TODO: create plots of the position over time 95% from the end
-  def plot_left_right_pos_over_time(self, amount_of_time: int):
+  def generate_pos_over_time_data(self, amount_of_time: int):
 
     old, current, new = self.initial_conditions()
-
-    time_array = []
 
     for i in range(round(amount_of_time / self.dt)):
       old, current, new = self.step(current, new)
@@ -149,9 +148,12 @@ class Wave():
       self.left_over_time.append(current[left_indx])
       self.right_over_time.append(current[right_indx])
 
-      time_array.append(i * self.dt)
+      self.time_array.append(i * self.dt)
+    
 
 
+  
+  def plot_pos_over_time(self):
     left_free_label = "fixed"
     right_free_label = "fixed"
     # fix plot labels
@@ -161,7 +163,8 @@ class Wave():
       right_free_label = "free"
     
     # now plot the data
-    plt.plot(time_array, self.left_over_time, label=f"Left end ({left_free_label})")
-    plt.plot(time_array, self.right_over_time, label=f"Right end ({right_free_label})")
+    plt.plot(self.time_array, self.left_over_time, label=f"Left end ({left_free_label})")
+    plt.plot(self.time_array, self.right_over_time, label=f"Right end ({right_free_label})")
     plt.legend()
     plt.show()
+    pass

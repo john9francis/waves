@@ -11,7 +11,8 @@ def main():
   #w.animated_plot(100)
 
   # TODO: perform a spectrum analysis
-  w.plot_left_right_pos_over_time(.5)
+  w.generate_pos_over_time_data(.5)
+  w.plot_pos_over_time()
 
 
 
