@@ -35,6 +35,9 @@ class Wave():
 
 
   def initial_conditions(self):
+    '''
+    Creates a gaussian pluck of the string
+    '''
     k = 100
     x0 = .6
 
