@@ -1,9 +1,21 @@
 import numpy as np
 import os
 import time
+from matplotlib import pyplot as plt
+
+from my_wave import Wave
 
 def main():
-  print("Hello World")
+  w = Wave(15)
+  w.animated_plot(5)
+
+  
+
+
+def clear_console():
+  os.system('cls' if os.name == 'nt' else 'clear')
+
+def simple_wave():
   # Let's get a simple wave going
 
   # start our wave arrays for time -1, 0 and 1
@@ -23,13 +35,6 @@ def main():
       print(i)
       time.sleep(.2)
       clear_console()
-
-  
-
-
-def clear_console():
-  os.system('cls' if os.name == 'nt' else 'clear')
-
 
 
 
