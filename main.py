@@ -7,7 +7,13 @@ from my_wave import Wave
 
 def main():
   w = Wave(15)
-  w.animated_plot(5)
+  w.animated_plot(6)
+  w.set_clamp(right_clamp=False)
+  w.animated_plot(6)
+  w.set_clamp(right_clamp=True, left_clamp=False)
+  w.animated_plot(6)
+  w.set_clamp(False, False)
+  w.animated_plot(6)
 
   
 

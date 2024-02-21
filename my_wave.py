@@ -3,8 +3,8 @@ from matplotlib import pyplot as plt
 import datetime
 
 class Wave():
-  def __init__(self, velocity) -> None:
-    self.dx = .001
+  def __init__(self, velocity, clamp_right=True, clamp_left=True) -> None:
+    self.dx = .01
     
     # cdt/dx = 1
     # dt = dx/c
@@ -12,12 +12,26 @@ class Wave():
 
     self.wave_array = np.arange(0, 1, self.dx)
     self.time_range = 0
+
+    # some bool flags
+    self.right_clamped = clamp_right
+    self.left_clamped = clamp_left
     pass
 
 
+  def set_clamp(self, right_clamp: bool =True, left_clamp: bool =True):
+    '''
+    Clamp one or both ends of the string so they can't move
+    '''
+    self.right_clamped = right_clamp
+    self.left_clamped = left_clamp
+
+
   def initial_conditions(self):
-    k = 1000
+    k = 100
     x0 = .6
+
+    # gaussian wavepacket 60% into the wave
     y_array = np.exp(-k * (self.wave_array - x0)**2)
 
     # take a single step to get our 3 arrays, old, current, and new.
@@ -33,9 +47,18 @@ class Wave():
     '''
     new = - old[1:-1] + current[2:] + current[:-2]
 
-    # enforce boundary conditions, for now clamp both ends.
-    new = np.append(new, 0)
-    new = np.insert(new, 0, 0)
+    # enforce boundary conditions
+    # note: depends on free or clamped ends
+    if self.left_clamped:
+      new = np.insert(new, 0, 0)
+    else:
+      new = np.insert(new, 0, new[0])
+
+    if self.right_clamped:
+      new = np.append(new, 0)
+    else:
+      new = np.append(new, new[-1])
+
     return old, current, new
 
 
