@@ -17,10 +17,15 @@ class Wave():
     self.wave_array = np.arange(0, 1, self.dx)
     self.time_range = 0
 
+    # define arrays of position of ends over time
+    self.left_over_time = []
+    self.right_over_time = []
+
     # some bool flags
     self.right_clamped = clamp_right
     self.left_clamped = clamp_left
 
+    # hook up plot to a close event, so we can quit the animation
     self.fig = plt.figure()
     self.fig.canvas.mpl_connect('close_event', self.on_close)
     pass
@@ -38,7 +43,7 @@ class Wave():
     '''
     Creates a gaussian pluck of the string
     '''
-    k = 100
+    k = 1000
     x0 = .6
 
     # gaussian wavepacket 60% into the wave
@@ -109,3 +114,54 @@ class Wave():
   def on_close(self, event):
     self.set_running(False)
     pass
+
+
+  def DFT(self, samples):
+    '''
+    Takes in a list of samples
+    '''
+    N = len(samples)
+    gamma = []
+    for k in range(N//2 + 1):
+      gammaK = 0
+      for n,yn in enumerate(samples):
+        gammaK += yn * np.exp(-2 * np.pi * k * n/N)
+      gamma.append(gammaK/N)
+
+    return gamma
+  
+
+
+  # TODO: create plots of the position over time 95% from the end
+  def plot_left_right_pos_over_time(self, amount_of_time: int):
+
+    old, current, new = self.initial_conditions()
+
+    time_array = []
+
+    for i in range(round(amount_of_time / self.dt)):
+      old, current, new = self.step(current, new)
+
+      # save to our lists
+      left_indx = round(len(current) * .05)
+      right_indx = round(len(current) * .95)
+
+      self.left_over_time.append(current[left_indx])
+      self.right_over_time.append(current[right_indx])
+
+      time_array.append(i * self.dt)
+
+
+    left_free_label = "fixed"
+    right_free_label = "fixed"
+    # fix plot labels
+    if not self.left_clamped:
+      left_free_label = "free"
+    if not self.right_clamped:
+      right_free_label = "free"
+    
+    # now plot the data
+    plt.plot(time_array, self.left_over_time, label=f"Left end ({left_free_label})")
+    plt.plot(time_array, self.right_over_time, label=f"Right end ({right_free_label})")
+    plt.legend()
+    plt.show()
