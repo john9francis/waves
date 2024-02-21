@@ -68,10 +68,16 @@ class Wave():
     start_time = datetime.datetime.now()
     end_time = start_time + datetime.timedelta(seconds=_seconds)
 
+    ymin = -max(current)
+    ymax = max(current)
+
     while True:
       old, current, new = self.step(current, new)
 
       # plot one frame
+      # enforce axes
+      plt.ylim(ymin, ymax)
+
       plt.plot(self.wave_array, current)
       plt.draw()
       plt.pause(self.dt)
