@@ -10,7 +10,7 @@ def main():
 
   w = Wave(15)
   w.set_clamp(right_clamp=False)
-  w.animated_plot(10)
+  #w.animated_plot(10)
 
   w.generate_pos_over_time_data(.5)
   w.plot_pos_over_time()

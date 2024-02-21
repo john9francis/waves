@@ -25,6 +25,7 @@ class Wave():
     # some bool flags
     self.right_clamped = clamp_right
     self.left_clamped = clamp_left
+    self.save = False
 
     # hook up plot to a close event, so we can quit the animation
     self.fig = plt.figure()
@@ -117,22 +118,6 @@ class Wave():
     pass
 
 
-  def DFT(self, samples):
-    '''
-    Takes in a list of samples
-    '''
-    N = len(samples)
-    gamma = []
-    for k in range(N//2 + 1):
-      gammaK = 0
-      for n,yn in enumerate(samples):
-        gammaK += yn * np.exp(-2 * np.pi * k * n/N)
-      gamma.append(gammaK/N)
-
-    return gamma
-  
-
-
   def generate_pos_over_time_data(self, amount_of_time: int):
 
     old, current, new = self.initial_conditions()
@@ -162,14 +147,20 @@ class Wave():
       right_free_label = "free"
     
     # now plot the data
-    plt.plot(self.time_array, self.left_over_time, label=f"Left end ({left_free_label})")
-    plt.plot(self.time_array, self.right_over_time, label=f"Right end ({right_free_label})")
-    plt.legend()
-    plt.show()
+    fig = plt.figure()
+    fig, ax = plt.subplots()
+    ax.plot(self.time_array, self.left_over_time, label=f"Left end ({left_free_label})")
+    ax.plot(self.time_array, self.right_over_time, label=f"Right end ({right_free_label})")
+    ax.legend()
+    fig.savefig("outputs/pos_over_time.png")
     pass
 
 
   def DFT(self, samples):
+    '''
+    Takes in a list of samples, and 
+    returns gamma values of a discrete fourier transform
+    '''
     N = len(samples)
     gamma = []
     kvalues = []
@@ -206,16 +197,18 @@ class Wave():
     if not self.right_clamped:
       right_free_label = "free"
 
-    plt.plot(
+    
+    fig, ax = plt.subplots()
+    ax.plot(
       x[:int(len(x)//graph_portion)], 
       y[:int(len(y)//graph_portion)],
       label=f"Left side ({left_free_label})")
     
-    plt.plot(
+    ax.plot(
       x1[:int(len(x1)//graph_portion)], 
       y1[:int(len(y1)//graph_portion)],
       label=f"Right side ({right_free_label})")
-    plt.show()
+    fig.savefig("outputs/dft_plots.png")
 
     # print out the fundamental frequencies
 
