@@ -198,6 +198,67 @@ class Wave():
     x1, y1 = self.DFT(self.right_over_time)
     y1 = [abs(i) for i in y1]
 
-    plt.plot(x[:int(len(x)//graph_portion)], y[:int(len(y)//graph_portion)])
-    plt.plot(x1[:int(len(x1)//graph_portion)], y1[:int(len(y1)//graph_portion)])
+    # get plot labels
+    left_free_label = "fixed"
+    right_free_label = "fixed"
+    # fix plot labels
+    if not self.left_clamped:
+      left_free_label = "free"
+    if not self.right_clamped:
+      right_free_label = "free"
+
+    plt.plot(
+      x[:int(len(x)//graph_portion)], 
+      y[:int(len(y)//graph_portion)],
+      label=f"Left side ({left_free_label})")
+    
+    plt.plot(
+      x1[:int(len(x1)//graph_portion)], 
+      y1[:int(len(y1)//graph_portion)],
+      label=f"Right side ({right_free_label})")
     plt.show()
+
+    # print out the fundamental frequencies
+
+    # first get the correct frequencies
+    y_frequencies = self.get_values_of_indices(y, self.find_indices_of_maxima(y))
+    y1_frequencies = self.get_values_of_indices(y1, self.find_indices_of_maxima(y1))
+    
+    print(f"The fundamental frequencies (left) are: {y_frequencies}")
+    print(f"The fundamental frequencies (right) are: {y1_frequencies}")
+
+
+  def find_local_maxima(self, _array):
+    '''Takes in an array and returns alist of local maxima'''
+
+    maxima = []
+
+    for i in range(len(_array)):
+      if _array[i-1] < _array[i] and _array[i+1] < _array[i]:
+        maxima.append(_array[i])
+
+    return maxima
+  
+
+  def find_indices_of_maxima(self, _array:list):
+    '''returns a list of indices where we are at maxima'''
+    i_list = []
+
+    for i in range(len(_array)):
+      if _array[i-1] < _array[i] and _array[i+1] < _array[i]:
+        i_list.append(i)
+
+    return i_list
+
+
+  def get_values_of_indices(self, value_list:list, indice_list:list):
+    '''
+    Goes through the indices list (ints) and returns all 
+    the values from value_list at those indices.
+    '''
+    final_values = []
+
+    for i in indice_list:
+      final_values.append(round(value_list[i]))
+
+    return final_values
