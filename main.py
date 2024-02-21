@@ -15,7 +15,7 @@ def main():
   w.set_clamp(False, False)
   w.animated_plot(6)
 
-  
+  # TODO: perform a spectrum analysis
 
 
 def clear_console():
