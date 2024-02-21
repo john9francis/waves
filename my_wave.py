@@ -221,24 +221,12 @@ class Wave():
     # print out the fundamental frequencies
 
     # first get the correct frequencies
-    y_frequencies = self.get_values_of_indices(y, self.find_indices_of_maxima(y))
-    y1_frequencies = self.get_values_of_indices(y1, self.find_indices_of_maxima(y1))
+    y_frequencies = self.get_values_of_indices(x, self.find_indices_of_maxima(y))
+    y1_frequencies = self.get_values_of_indices(x1, self.find_indices_of_maxima(y1))
     
     print(f"The fundamental frequencies (left) are: {y_frequencies}")
     print(f"The fundamental frequencies (right) are: {y1_frequencies}")
 
-
-  def find_local_maxima(self, _array):
-    '''Takes in an array and returns alist of local maxima'''
-
-    maxima = []
-
-    for i in range(len(_array)):
-      if _array[i-1] < _array[i] and _array[i+1] < _array[i]:
-        maxima.append(_array[i])
-
-    return maxima
-  
 
   def find_indices_of_maxima(self, _array:list):
     '''returns a list of indices where we are at maxima'''
