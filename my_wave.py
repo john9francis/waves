@@ -168,3 +168,33 @@ class Wave():
     plt.legend()
     plt.show()
     pass
+
+
+  def DFT(self, samples):
+    N = len(samples)
+    gamma = []
+    kvalues = []
+    for k in range(N//2+1):
+        gammaK = 0
+        for n,yn in enumerate(samples):
+            gammaK += yn * np.exp(-2j * np.pi * k * n/N )
+        gamma.append(gammaK/N) # square for absolute value
+        kvalues.append(k)
+
+    return kvalues, gamma
+  
+
+  def plot_dfts(self):
+    '''
+    plot frequency vs. power
+    '''
+    # first create our frequency axis
+    
+    x, y = self.DFT(self.left_over_time)
+    y = [abs(i) for i in y]
+
+    x1, y1 = self.DFT(self.right_over_time)
+    y1 = [abs(i) for i in y1]
+    plt.plot(x, y)
+    plt.plot(x1, y1)
+    plt.show()
