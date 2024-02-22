@@ -5,6 +5,7 @@ import datetime
 class Wave():
 
   # static variable to control if it's running
+  # so all instances of the class share this one value
   running = True
 
   def __init__(self, velocity, clamp_right=True, clamp_left=True) -> None:
@@ -14,6 +15,7 @@ class Wave():
     # dt = dx/c
     self.dt = self.dx / velocity
 
+    # create y positional array for the wave
     self.wave_array = np.arange(0, 1, self.dx)
     self.time_range = 0
 
@@ -28,6 +30,8 @@ class Wave():
     self.save = False
 
     # hook up plot to a close event, so we can quit the animation
+    # by closing the animation window. otherwise the animation is
+    # impossible to stop.
     self.fig = plt.figure()
     self.fig.canvas.mpl_connect('close_event', self.on_close)
     pass
@@ -44,11 +48,14 @@ class Wave():
   def initial_conditions(self):
     '''
     Creates a gaussian pluck of the string
+    note: this function could be improved if 
+    we want custom initial conditions, but for now it's
+    hardcoded to create a gaussian pluck 40% from the end.
     '''
     k = 1000
     x0 = .6
 
-    # gaussian wavepacket 60% into the wave
+    # gaussian wavepacket 40% away from the end of the wave
     y_array = np.exp(-k * (self.wave_array - x0)**2)
 
     # take a single step to get our 3 arrays, old, current, and new.
@@ -80,25 +87,33 @@ class Wave():
 
 
   def animated_plot(self, _seconds):
+    '''
+    Opens a window that animates a wave on a string moving
+    '''
+    # get our basic graph from initial conditions
     old, current, new = self.initial_conditions()
 
+    # get start and end time based on the _seconds parameter
     start_time = datetime.datetime.now()
     end_time = start_time + datetime.timedelta(seconds=_seconds)
 
+    # bounds for our graph
     ymin = -max(current)
     ymax = max(current)
 
     while True:
       # quit if running flag is false
+      # note: self.running is false when the user closes a window
       if not self.running:
         return
       
+      # update our wave to the next position
       old, current, new = self.step(current, new)
 
-      # plot one frame
       # enforce axes
       plt.ylim(ymin, ymax)
 
+      # plot one frame
       plt.plot(self.wave_array, current)
       plt.draw()
       plt.pause(self.dt)
@@ -111,18 +126,31 @@ class Wave():
 
   @classmethod
   def set_running(cls, value:bool):
+    '''Static method that sets the running parameter'''
     cls.running = value
 
   def on_close(self, event):
+    '''Method that is called when user closes the window'''
     self.set_running(False)
     pass
 
 
   def generate_pos_over_time_data(self, amount_of_time: int):
+    '''
+    Fills the self.left_over_time and self.right_over_time graphs.
+    These are the two ends of the string's y displacement over time.
+    by the 'two ends' I mean 5% away from the ends.
+
+    note: this method is similar to animated_plot but this does the 
+    whole thing fast and just generates a final plot. 
+    '''
 
     old, current, new = self.initial_conditions()
 
+    # loop over our time period
     for i in range(round(amount_of_time / self.dt)):
+
+      # update our wave
       old, current, new = self.step(current, new)
 
       # save to our lists
@@ -138,6 +166,9 @@ class Wave():
 
   
   def plot_pos_over_time(self):
+    '''
+    Plots the pos over time data with accurate labels
+    '''
     left_free_label = "fixed"
     right_free_label = "fixed"
     # fix plot labels
@@ -176,9 +207,12 @@ class Wave():
 
   def plot_dfts(self, graph_portion=3):
     '''
-    plot frequency vs. power
+    plots frequency vs. power, and calculates fundamental frequencies.
     parameter is graph_portion, the higher the value the less
     of the graph we generate. 
+
+    Note: this function does a lot, and it probably should
+    be split up into different functions. 
     '''
     # first create our frequency axis
     
@@ -208,6 +242,8 @@ class Wave():
       x1[:int(len(x1)//graph_portion)], 
       y1[:int(len(y1)//graph_portion)],
       label=f"Right side ({right_free_label})")
+    
+    fig.legend()
     fig.savefig("outputs/dft_plots.png")
 
     # print out the fundamental frequencies
@@ -219,6 +255,10 @@ class Wave():
     print(f"The fundamental frequencies (left) are: {y_frequencies}")
     print(f"The fundamental frequencies (right) are: {y1_frequencies}")
 
+
+
+
+  # some helper functions for self.plot_dfts
 
   def find_indices_of_maxima(self, _array:list):
     '''returns a list of indices where we are at maxima'''

@@ -1,13 +1,10 @@
 import numpy as np
-import os
-import time
 from matplotlib import pyplot as plt
 
 from my_wave import Wave
 
 def main():
-  # example of some of the stuff we can do
-
+  # example of some of the Wave class can do
   w = Wave(15)
   w.set_clamp(right_clamp=False)
   #w.animated_plot(10)
